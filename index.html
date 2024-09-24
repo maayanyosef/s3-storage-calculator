@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS S3 Storage Cost Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>AWS S3 Storage Cost Calculator</h1>
+    <table id="s3-calculator">
+        <thead>
+            <tr>
+                <th>Storage Tier</th>
+                <th>Storage Size (GB)</th>
+                <th>PUT/COPY/POST/LIST Requests</th>
+                <th>GET/SELECT Requests</th>
+                <th>Data Retrieval (GB)</th>
+                <th>Cost ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>S3 Standard</td>
+                <td><input type="number" id="standard-size" placeholder="GB"></td>
+                <td><input type="number" id="standard-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="standard-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="standard-retrieval" placeholder="GB"></td>
+                <td id="standard-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 Standard-IA</td>
+                <td><input type="number" id="standard-ia-size" placeholder="GB"></td>
+                <td><input type="number" id="standard-ia-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="standard-ia-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="standard-ia-retrieval" placeholder="GB"></td>
+                <td id="standard-ia-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 One Zone-IA</td>
+                <td><input type="number" id="onezone-ia-size" placeholder="GB"></td>
+                <td><input type="number" id="onezone-ia-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="onezone-ia-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="onezone-ia-retrieval" placeholder="GB"></td>
+                <td id="onezone-ia-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 Glacier Instant Retrieval</td>
+                <td><input type="number" id="glacier-ir-size" placeholder="GB"></td>
+                <td><input type="number" id="glacier-ir-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-ir-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-ir-retrieval" placeholder="GB"></td>
+                <td id="glacier-ir-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 Glacier Flexible Retrieval</td>
+                <td><input type="number" id="glacier-fr-size" placeholder="GB"></td>
+                <td><input type="number" id="glacier-fr-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-fr-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-fr-retrieval" placeholder="GB"></td>
+                <td id="glacier-fr-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 Glacier Deep Archive</td>
+                <td><input type="number" id="glacier-da-size" placeholder="GB"></td>
+                <td><input type="number" id="glacier-da-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-da-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="glacier-da-retrieval" placeholder="GB"></td>
+                <td id="glacier-da-cost">$0.00</td>
+            </tr>
+            <tr>
+                <td>S3 Intelligent-Tiering</td>
+                <td><input type="number" id="intelligent-tiering-size" placeholder="GB"></td>
+                <td><input type="number" id="intelligent-tiering-put-requests" placeholder="Count"></td>
+                <td><input type="number" id="intelligent-tiering-get-requests" placeholder="Count"></td>
+                <td><input type="number" id="intelligent-tiering-retrieval" placeholder="GB"></td>
+                <td id="intelligent-tiering-cost">$0.00</td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="calculateCosts()">Calculate</button>
+    <script src="script.js"></script>
+</body>
+</html>
