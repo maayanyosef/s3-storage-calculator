@@ -2,24 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AWS S3 Storage Cost Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Tools - S3 Bucket Analyzer & Cost Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1030.0.min.js"></script>
+    <script src="script-analyze.js" defer></script>
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>AWS S3 Storage Cost Calculator</h1>
-    <table id="s3-calculator">
-        <thead>
-            <tr>
-                <th>Storage Tier</th>
-                <th>Storage Size</th>
-                <th>PUT/COPY/POST/LIST Requests</th>
-                <th>GET/SELECT Requests</th>
-                <th>Data Retrieval</th>
-                <th>Monthly Cost ($)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- S3 Standard -->
+    <h1>AWS S3 Tools</h1>
+
+    <!-- Tab Navigation -->
+    <div class="tab-container">
+        <button class="tab-button active" onclick="openTab('analyzer')">S3 Bucket Analyzer</button>
+        <button class="tab-button" onclick="openTab('calculator')">S3 Storage Cost Calculator</button>
+    </div>
+
+    <!-- S3 Bucket Analyzer Section -->
+    <div id="analyzer" class="tab-content">
+        <h2>S3 Bucket Analyzer</h2>
+        <!-- CORS Policy Notification -->
+        <div id="notification" class="notification">
+            <h3>Important: Add this CORS policy to your S3 bucket before proceeding:</h3>
+            <pre id="corsPolicy">
+[
+    {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "HEAD"],
+        "AllowedOrigins": ["*"],
+        "ExposeHeaders": ["ETag", "x-amz-meta-custom-header", "Content-Length"],
+        "MaxAgeSeconds": 3000
+    }
+]
+            </pre>
+            <button id="closeNotification" onclick="closeNotification()">Got it</button>
+        </div>
+
+        <!-- AWS Credentials Inputs -->
+        <div class="input-container">
+            <input type="text" id="accessKeyId" placeholder="Enter AWS Access Key ID"><br>
+            <input type="text" id="secretAccessKey" placeholder="Enter AWS Secret Access Key"><br>
+            <input type="text" id="sessionToken" placeholder="Enter AWS Session Token (Optional)"><br>
+            <input type="text" id="region" placeholder="Enter AWS Region (e.g., us-east-1)"><br>
+            <input type="text" id="bucketName" placeholder="Enter your bucket name"><br>
+            <button onclick="analyzeBucket()">Analyze Bucket</button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressContainer">
+            <div id="progressBar">0%</div>
+        </div>
+
+        <!-- Output Results -->
+        <div class="results-container">
+            <h3>Bucket Costs</h3>
+            <pre id="bucketContents">Waiting for analysis...</pre>
+
+            <!-- Policy Text Area -->
+            <h3>Suggested Bucket Lifecycle Policy</h3>
+            <textarea id="policyArea" readonly>
+Waiting for analysis...
+            </textarea>
+        </div>
+    </div>
+
+    <!-- S3 Storage Cost Calculator Section -->
+    <div id="calculator" class="tab-content" style="display:none;">
+        <h2>AWS S3 Storage Cost Calculator</h2>
+        <table id="s3-calculator">
+            <thead>
+                <tr>
+                    <th>Storage Tier</th>
+                    <th>Storage Size</th>
+                    <th>PUT/COPY/POST/LIST Requests</th>
+                    <th>GET/SELECT Requests</th>
+                    <th>Data Retrieval</th>
+                    <th>Monthly Cost ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+ <!-- S3 Standard -->
             <tr>
                 <td>S3 Standard</td>
                 <td>
@@ -166,10 +229,38 @@
                 </td>
                 <td id="intelligent-tiering-cost">$0.00</td>
             </tr>
-        </tbody>
-    </table>
-    <button onclick="calculateCosts()">Calculate</button>
-    <h2>Total Monthly Cost: <span id="total-monthly-cost">$0.00</span></h2>
-    <script src="script.js"></script>
+            </tbody>
+        </table>
+        <button onclick="calculateCosts()">Calculate</button>
+        <h3>Total Monthly Cost: <span id="total-monthly-cost">$0.00</span></h3>
+    </div>
+
+    <script>
+        // Function to open the selected tab
+        function openTab(tabName) {
+            var i, tabcontent, tabbuttons;
+
+            // Hide all tab contents
+            tabcontent = document.getElementsByClassName('tab-content');
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = 'none';
+            }
+
+            // Remove the 'active' class from all buttons
+            tabbuttons = document.getElementsByClassName('tab-button');
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove('active');
+            }
+
+            // Show the current tab and add the 'active' class to the corresponding button
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+
+        // Close the CORS notification
+        function closeNotification() {
+            document.getElementById('notification').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
