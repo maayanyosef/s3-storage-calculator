@@ -1,5 +1,5 @@
 function calculateCosts() {
-    // Prices per GB per month (example rates)
+    // Prices per GB per month (example rates as of my knowledge cutoff in September 2021)
     const prices = {
         standard: 0.023,
         standardIA: 0.0125,
@@ -9,14 +9,11 @@ function calculateCosts() {
         glacierDA: 0.00099,
         intelligentTiering: {
             frequentAccess: 0.023,
-            infrequentAccess: 0.0125,
-            archiveAccess: 0.004,
-            deepArchiveAccess: 0.00099,
             monitoring: 0.0025 // per 1,000 objects
         }
     };
 
-    // Request costs per 1,000 requests (example rates)
+    // Request costs per 1,000 requests
     const requestCosts = {
         standard: {
             put: 0.005,
@@ -48,7 +45,7 @@ function calculateCosts() {
         }
     };
 
-    // Retrieval costs per GB (example rates)
+    // Retrieval costs per GB
     const retrievalCosts = {
         standard: 0,
         standardIA: 0.01,
@@ -56,106 +53,186 @@ function calculateCosts() {
         glacierIR: 0.03,
         glacierFR: 0.01,
         glacierDA: 0.02,
-        intelligentTiering: {
-            frequentAccess: 0,
-            infrequentAccess: 0.01,
-            archiveAccess: 0.03,
-            deepArchiveAccess: 0.02
-        }
+        intelligentTiering: 0.01 // Assuming infrequent access retrieval
     };
 
+    // Helper function to convert TB to GB
+    function convertToGB(size, unit) {
+        if (unit === "TB") {
+            return size * 1024; // 1 TB = 1024 GB
+        }
+        return size; // If unit is GB
+    }
+
+    let totalMonthlyCost = 0;
+
     // S3 Standard
-    const standardSize = parseFloat(document.getElementById('standard-size').value) || 0;
-    const standardPutRequests = parseFloat(document.getElementById('standard-put-requests').value) || 0;
-    const standardGetRequests = parseFloat(document.getElementById('standard-get-requests').value) || 0;
-    const standardRetrieval = parseFloat(document.getElementById('standard-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('standard-size').value) || 0;
+        const sizeUnit = document.getElementById('standard-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const standardStorageCost = standardSize * prices.standard;
-    const standardRequestCost = ((standardPutRequests / 1000) * requestCosts.standard.put) + ((standardGetRequests / 1000) * requestCosts.standard.get);
-    const standardRetrievalCost = standardRetrieval * retrievalCosts.standard;
+        const putRequests = parseFloat(document.getElementById('standard-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('standard-get-requests').value) || 0;
 
-    const standardTotalCost = standardStorageCost + standardRequestCost + standardRetrievalCost;
-    document.getElementById('standard-cost').innerText = `$${standardTotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('standard-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('standard-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
 
-    // Repeat similar calculations for other tiers...
+        const storageCost = storageSizeGB * prices.standard;
+        const requestCost = ((putRequests / 1000) * requestCosts.standard.put) + ((getRequests / 1000) * requestCosts.standard.get);
+        const retrievalCost = retrievalGB * retrievalCosts.standard;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('standard-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 Standard-IA
-    const standardIASize = parseFloat(document.getElementById('standard-ia-size').value) || 0;
-    const standardIAPutRequests = parseFloat(document.getElementById('standard-ia-put-requests').value) || 0;
-    const standardIAGetRequests = parseFloat(document.getElementById('standard-ia-get-requests').value) || 0;
-    const standardIARetrieval = parseFloat(document.getElementById('standard-ia-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('standard-ia-size').value) || 0;
+        const sizeUnit = document.getElementById('standard-ia-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const standardIAStorageCost = standardIASize * prices.standardIA;
-    const standardIARequestCost = ((standardIAPutRequests / 1000) * requestCosts.standardIA.put) + ((standardIAGetRequests / 1000) * requestCosts.standardIA.get);
-    const standardIARetrievalCost = standardIARetrieval * retrievalCosts.standardIA;
+        const putRequests = parseFloat(document.getElementById('standard-ia-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('standard-ia-get-requests').value) || 0;
 
-    const standardIATotalCost = standardIAStorageCost + standardIARequestCost + standardIARetrievalCost;
-    document.getElementById('standard-ia-cost').innerText = `$${standardIATotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('standard-ia-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('standard-ia-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        const storageCost = storageSizeGB * prices.standardIA;
+        const requestCost = ((putRequests / 1000) * requestCosts.standardIA.put) + ((getRequests / 1000) * requestCosts.standardIA.get);
+        const retrievalCost = retrievalGB * retrievalCosts.standardIA;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('standard-ia-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 One Zone-IA
-    const oneZoneIASize = parseFloat(document.getElementById('onezone-ia-size').value) || 0;
-    const oneZoneIAPutRequests = parseFloat(document.getElementById('onezone-ia-put-requests').value) || 0;
-    const oneZoneIAGetRequests = parseFloat(document.getElementById('onezone-ia-get-requests').value) || 0;
-    const oneZoneIARetrieval = parseFloat(document.getElementById('onezone-ia-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('onezone-ia-size').value) || 0;
+        const sizeUnit = document.getElementById('onezone-ia-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const oneZoneIAStorageCost = oneZoneIASize * prices.oneZoneIA;
-    const oneZoneIARequestCost = ((oneZoneIAPutRequests / 1000) * requestCosts.oneZoneIA.put) + ((oneZoneIAGetRequests / 1000) * requestCosts.oneZoneIA.get);
-    const oneZoneIARetrievalCost = oneZoneIARetrieval * retrievalCosts.oneZoneIA;
+        const putRequests = parseFloat(document.getElementById('onezone-ia-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('onezone-ia-get-requests').value) || 0;
 
-    const oneZoneIATotalCost = oneZoneIAStorageCost + oneZoneIARequestCost + oneZoneIARetrievalCost;
-    document.getElementById('onezone-ia-cost').innerText = `$${oneZoneIATotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('onezone-ia-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('onezone-ia-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        const storageCost = storageSizeGB * prices.oneZoneIA;
+        const requestCost = ((putRequests / 1000) * requestCosts.oneZoneIA.put) + ((getRequests / 1000) * requestCosts.oneZoneIA.get);
+        const retrievalCost = retrievalGB * retrievalCosts.oneZoneIA;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('onezone-ia-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 Glacier Instant Retrieval
-    const glacierIRSize = parseFloat(document.getElementById('glacier-ir-size').value) || 0;
-    const glacierIRPutRequests = parseFloat(document.getElementById('glacier-ir-put-requests').value) || 0;
-    const glacierIRGetRequests = parseFloat(document.getElementById('glacier-ir-get-requests').value) || 0;
-    const glacierIRRetrieval = parseFloat(document.getElementById('glacier-ir-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('glacier-ir-size').value) || 0;
+        const sizeUnit = document.getElementById('glacier-ir-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const glacierIRStorageCost = glacierIRSize * prices.glacierIR;
-    const glacierIRRequestCost = ((glacierIRPutRequests / 1000) * requestCosts.glacierIR.put) + ((glacierIRGetRequests / 1000) * requestCosts.glacierIR.get);
-    const glacierIRRetrievalCost = glacierIRRetrieval * retrievalCosts.glacierIR;
+        const putRequests = parseFloat(document.getElementById('glacier-ir-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('glacier-ir-get-requests').value) || 0;
 
-    const glacierIRTotalCost = glacierIRStorageCost + glacierIRRequestCost + glacierIRRetrievalCost;
-    document.getElementById('glacier-ir-cost').innerText = `$${glacierIRTotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('glacier-ir-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('glacier-ir-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        const storageCost = storageSizeGB * prices.glacierIR;
+        const requestCost = ((putRequests / 1000) * requestCosts.glacierIR.put) + ((getRequests / 1000) * requestCosts.glacierIR.get);
+        const retrievalCost = retrievalGB * retrievalCosts.glacierIR;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('glacier-ir-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 Glacier Flexible Retrieval
-    const glacierFRSize = parseFloat(document.getElementById('glacier-fr-size').value) || 0;
-    const glacierFRPutRequests = parseFloat(document.getElementById('glacier-fr-put-requests').value) || 0;
-    const glacierFRGetRequests = parseFloat(document.getElementById('glacier-fr-get-requests').value) || 0;
-    const glacierFRRetrieval = parseFloat(document.getElementById('glacier-fr-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('glacier-fr-size').value) || 0;
+        const sizeUnit = document.getElementById('glacier-fr-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const glacierFRStorageCost = glacierFRSize * prices.glacierFR;
-    const glacierFRRequestCost = ((glacierFRPutRequests / 1000) * requestCosts.glacierFR.put) + ((glacierFRGetRequests / 1000) * requestCosts.glacierFR.get);
-    const glacierFRRetrievalCost = glacierFRRetrieval * retrievalCosts.glacierFR;
+        const putRequests = parseFloat(document.getElementById('glacier-fr-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('glacier-fr-get-requests').value) || 0;
 
-    const glacierFRTotalCost = glacierFRStorageCost + glacierFRRequestCost + glacierFRRetrievalCost;
-    document.getElementById('glacier-fr-cost').innerText = `$${glacierFRTotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('glacier-fr-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('glacier-fr-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        const storageCost = storageSizeGB * prices.glacierFR;
+        const requestCost = ((putRequests / 1000) * requestCosts.glacierFR.put) + ((getRequests / 1000) * requestCosts.glacierFR.get);
+        const retrievalCost = retrievalGB * retrievalCosts.glacierFR;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('glacier-fr-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 Glacier Deep Archive
-    const glacierDASize = parseFloat(document.getElementById('glacier-da-size').value) || 0;
-    const glacierDAPutRequests = parseFloat(document.getElementById('glacier-da-put-requests').value) || 0;
-    const glacierDAGetRequests = parseFloat(document.getElementById('glacier-da-get-requests').value) || 0;
-    const glacierDARetrieval = parseFloat(document.getElementById('glacier-da-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('glacier-da-size').value) || 0;
+        const sizeUnit = document.getElementById('glacier-da-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    const glacierDAStorageCost = glacierDASize * prices.glacierDA;
-    const glacierDARequestCost = ((glacierDAPutRequests / 1000) * requestCosts.glacierDA.put) + ((glacierDAGetRequests / 1000) * requestCosts.glacierDA.get);
-    const glacierDARetrievalCost = glacierDARetrieval * retrievalCosts.glacierDA;
+        const putRequests = parseFloat(document.getElementById('glacier-da-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('glacier-da-get-requests').value) || 0;
 
-    const glacierDATotalCost = glacierDAStorageCost + glacierDARequestCost + glacierDARetrievalCost;
-    document.getElementById('glacier-da-cost').innerText = `$${glacierDATotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('glacier-da-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('glacier-da-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        const storageCost = storageSizeGB * prices.glacierDA;
+        const requestCost = ((putRequests / 1000) * requestCosts.glacierDA.put) + ((getRequests / 1000) * requestCosts.glacierDA.get);
+        const retrievalCost = retrievalGB * retrievalCosts.glacierDA;
+
+        const totalCost = storageCost + requestCost + retrievalCost;
+        document.getElementById('glacier-da-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
 
     // S3 Intelligent-Tiering
-    const intelligentTieringSize = parseFloat(document.getElementById('intelligent-tiering-size').value) || 0;
-    const intelligentTieringPutRequests = parseFloat(document.getElementById('intelligent-tiering-put-requests').value) || 0;
-    const intelligentTieringGetRequests = parseFloat(document.getElementById('intelligent-tiering-get-requests').value) || 0;
-    const intelligentTieringRetrieval = parseFloat(document.getElementById('intelligent-tiering-retrieval').value) || 0;
+    {
+        const size = parseFloat(document.getElementById('intelligent-tiering-size').value) || 0;
+        const sizeUnit = document.getElementById('intelligent-tiering-size-unit').value;
+        const storageSizeGB = convertToGB(size, sizeUnit);
 
-    // Assume all data in Frequent Access for simplicity
-    const intelligentTieringStorageCost = intelligentTieringSize * prices.intelligentTiering.frequentAccess;
-    const intelligentTieringRequestCost = ((intelligentTieringPutRequests / 1000) * requestCosts.intelligentTiering.put) + ((intelligentTieringGetRequests / 1000) * requestCosts.intelligentTiering.get);
-    const intelligentTieringRetrievalCost = intelligentTieringRetrieval * retrievalCosts.intelligentTiering.frequentAccess;
-    const intelligentTieringMonitoringCost = (intelligentTieringSize * 1024 * prices.intelligentTiering.monitoring) / 1000; // Assuming 1,024 objects per GB
+        const putRequests = parseFloat(document.getElementById('intelligent-tiering-put-requests').value) || 0;
+        const getRequests = parseFloat(document.getElementById('intelligent-tiering-get-requests').value) || 0;
 
-    const intelligentTieringTotalCost = intelligentTieringStorageCost + intelligentTieringRequestCost + intelligentTieringRetrievalCost + intelligentTieringMonitoringCost;
-    document.getElementById('intelligent-tiering-cost').innerText = `$${intelligentTieringTotalCost.toFixed(2)}`;
+        const retrieval = parseFloat(document.getElementById('intelligent-tiering-retrieval').value) || 0;
+        const retrievalUnit = document.getElementById('intelligent-tiering-retrieval-unit').value;
+        const retrievalGB = convertToGB(retrieval, retrievalUnit);
+
+        // Assume all data is in Frequent Access for simplicity
+        const storageCost = storageSizeGB * prices.intelligentTiering.frequentAccess;
+
+        const requestCost = ((putRequests / 1000) * requestCosts.intelligentTiering.put) + ((getRequests / 1000) * requestCosts.intelligentTiering.get);
+        const retrievalCost = retrievalGB * retrievalCosts.intelligentTiering;
+
+        // Monitoring cost: Assuming 1,024 objects per GB
+        const numberOfObjects = storageSizeGB * 1024;
+        const monitoringCost = (numberOfObjects / 1000) * prices.intelligentTiering.monitoring;
+
+        const totalCost = storageCost + requestCost + retrievalCost + monitoringCost;
+        document.getElementById('intelligent-tiering-cost').innerText = `$${totalCost.toFixed(2)}`;
+
+        totalMonthlyCost += totalCost;
+    }
+
+    // Update Total Monthly Cost
+    document.getElementById('total-monthly-cost').innerText = `$${totalMonthlyCost.toFixed(2)}`;
 }
