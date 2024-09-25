@@ -35,7 +35,7 @@ function updateRegion() {
         'us-east-2': 'US East (Ohio)',
         'us-west-1': 'US West (N. California)',
         'us-west-2': 'US West (Oregon)',
-        'eu-west-1': 'EU (Ireland)'
+        'eu-west-1': 'EU (Ireland)',
         'il-central-1': 'Israel (Tel Aviv)'
         // Add more region names as needed
     };
