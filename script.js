@@ -9,7 +9,11 @@ function calculateCosts() {
         glacierDA: 0.00099,
         intelligentTiering: {
             frequentAccess: 0.023,
-            monitoring: 0.0025 // per 1,000 objects
+            infrequentAccess: 0.0125,
+            archiveInstantAccess: 0.004,
+            archiveAccess: 0.0036,
+            deepArchiveAccess: 0.00099,
+            monitoring: 0.0025 // per 1,000 objects per month
         }
     };
 
@@ -50,10 +54,16 @@ function calculateCosts() {
         standard: 0,
         standardIA: 0.01,
         oneZoneIA: 0.01,
-        glacierIR: 0.03,
-        glacierFR: 0.01,
-        glacierDA: 0.02,
-        intelligentTiering: 0.01 // Assuming infrequent access retrieval
+        glacierIR: 0.003,
+        glacierFR: 0.01, // For Standard Retrievals
+        glacierDA: 0.02, // For Standard Retrievals
+        intelligentTiering: {
+            frequentAccess: 0,
+            infrequentAccess: 0,
+            archiveInstantAccess: 0.003,
+            archiveAccess: 0.01,
+            deepArchiveAccess: 0.02
+        }
     };
 
     // Helper function to convert TB to GB using decimal conversion (1 TB = 1,000 GB)
@@ -67,55 +77,82 @@ function calculateCosts() {
 
     let totalMonthlyCost = 0;
 
-    // S3 Standard
-    {
-        const size = parseFloat(document.getElementById('standard-size').value) || 0;
-        const sizeUnit = document.getElementById('standard-size-unit').value;
+    // Function to calculate costs for a specific tier
+    function calculateTierCost(tierId, pricePerGB, requestCost, retrievalCostPerGB) {
+        const size = parseFloat(document.getElementById(`${tierId}-size`).value) || 0;
+        const sizeUnit = document.getElementById(`${tierId}-size-unit`).value;
         const storageSizeGB = convertToGB(size, sizeUnit);
 
-        const putRequests = parseFloat(document.getElementById('standard-put-requests').value) || 0;
-        const getRequests = parseFloat(document.getElementById('standard-get-requests').value) || 0;
+        const putRequests = parseFloat(document.getElementById(`${tierId}-put-requests`).value) || 0;
+        const getRequests = parseFloat(document.getElementById(`${tierId}-get-requests`).value) || 0;
 
-        const retrieval = parseFloat(document.getElementById('standard-retrieval').value) || 0;
-        const retrievalUnit = document.getElementById('standard-retrieval-unit').value;
+        const retrieval = parseFloat(document.getElementById(`${tierId}-retrieval`).value) || 0;
+        const retrievalUnit = document.getElementById(`${tierId}-retrieval-unit`).value;
         const retrievalGB = convertToGB(retrieval, retrievalUnit);
 
-        const storageCost = storageSizeGB * prices.standard;
-        const requestCost = ((putRequests / 1000) * requestCosts.standard.put) + ((getRequests / 1000) * requestCosts.standard.get);
-        const retrievalCost = retrievalGB * retrievalCosts.standard;
+        const storageCost = storageSizeGB * pricePerGB;
+        const requestCostTotal = ((putRequests / 1000) * requestCost.put) + ((getRequests / 1000) * requestCost.get);
+        const retrievalCost = retrievalGB * retrievalCostPerGB;
 
-        const totalCost = storageCost + requestCost + retrievalCost;
-        document.getElementById('standard-cost').innerText = `$${totalCost.toFixed(2)}`;
+        const totalCost = storageCost + requestCostTotal + retrievalCost;
+        document.getElementById(`${tierId}-cost`).innerText = `$${totalCost.toFixed(2)}`;
 
-        totalMonthlyCost += totalCost;
+        return totalCost;
     }
+
+    // S3 Standard
+    totalMonthlyCost += calculateTierCost('standard', prices.standard, requestCosts.standard, retrievalCosts.standard);
 
     // S3 Standard-IA
+    totalMonthlyCost += calculateTierCost('standard-ia', prices.standardIA, requestCosts.standardIA, retrievalCosts.standardIA);
+
+    // S3 One Zone-IA
+    totalMonthlyCost += calculateTierCost('onezone-ia', prices.oneZoneIA, requestCosts.oneZoneIA, retrievalCosts.oneZoneIA);
+
+    // S3 Glacier Instant Retrieval
+    totalMonthlyCost += calculateTierCost('glacier-ir', prices.glacierIR, requestCosts.glacierIR, retrievalCosts.glacierIR);
+
+    // S3 Glacier Flexible Retrieval
+    totalMonthlyCost += calculateTierCost('glacier-fr', prices.glacierFR, requestCosts.glacierFR, retrievalCosts.glacierFR);
+
+    // S3 Glacier Deep Archive
+    totalMonthlyCost += calculateTierCost('glacier-da', prices.glacierDA, requestCosts.glacierDA, retrievalCosts.glacierDA);
+
+    // S3 Intelligent-Tiering
     {
-        const size = parseFloat(document.getElementById('standard-ia-size').value) || 0;
-        const sizeUnit = document.getElementById('standard-ia-size-unit').value;
+        const tierId = 'intelligent-tiering';
+        const size = parseFloat(document.getElementById(`${tierId}-size`).value) || 0;
+        const sizeUnit = document.getElementById(`${tierId}-size-unit`).value;
         const storageSizeGB = convertToGB(size, sizeUnit);
 
-        const putRequests = parseFloat(document.getElementById('standard-ia-put-requests').value) || 0;
-        const getRequests = parseFloat(document.getElementById('standard-ia-get-requests').value) || 0;
+        const putRequests = parseFloat(document.getElementById(`${tierId}-put-requests`).value) || 0;
+        const getRequests = parseFloat(document.getElementById(`${tierId}-get-requests`).value) || 0;
 
-        const retrieval = parseFloat(document.getElementById('standard-ia-retrieval').value) || 0;
-        const retrievalUnit = document.getElementById('standard-ia-retrieval-unit').value;
+        const retrieval = parseFloat(document.getElementById(`${tierId}-retrieval`).value) || 0;
+        const retrievalUnit = document.getElementById(`${tierId}-retrieval-unit`).value;
         const retrievalGB = convertToGB(retrieval, retrievalUnit);
 
-        const storageCost = storageSizeGB * prices.standardIA;
-        const requestCost = ((putRequests / 1000) * requestCosts.standardIA.put) + ((getRequests / 1000) * requestCosts.standardIA.get);
-        const retrievalCost = retrievalGB * retrievalCosts.standardIA;
+        // Assume 80% data in Frequent Access, 20% in Infrequent Access
+        const frequentAccessSizeGB = storageSizeGB * 0.8;
+        const infrequentAccessSizeGB = storageSizeGB * 0.2;
 
-        const totalCost = storageCost + requestCost + retrievalCost;
-        document.getElementById('standard-ia-cost').innerText = `$${totalCost.toFixed(2)}`;
+        const storageCost = (frequentAccessSizeGB * prices.intelligentTiering.frequentAccess) +
+                            (infrequentAccessSizeGB * prices.intelligentTiering.infrequentAccess);
+
+        const requestCost = ((putRequests / 1000) * requestCosts.intelligentTiering.put) +
+                            ((getRequests / 1000) * requestCosts.intelligentTiering.get);
+        // Assume all retrievals are from Infrequent Access Tier
+        const retrievalCost = retrievalGB * retrievalCosts.intelligentTiering.infrequentAccess;
+
+        // Monitoring cost: Assuming 1,000 objects per GB
+        const numberOfObjects = storageSizeGB * 1000;
+        const monitoringCost = (numberOfObjects / 1000) * prices.intelligentTiering.monitoring;
+
+        const totalCost = storageCost + requestCost + retrievalCost + monitoringCost;
+        document.getElementById(`${tierId}-cost`).innerText = `$${totalCost.toFixed(2)}`;
 
         totalMonthlyCost += totalCost;
     }
-
-    // Continue similar calculations for other storage tiers (One Zone-IA, Glacier IR, Glacier FR, Glacier DA, Intelligent-Tiering)
-    // ...
-
     // Update Total Monthly Cost
     document.getElementById('total-monthly-cost').innerText = `$${totalMonthlyCost.toFixed(2)}`;
 }

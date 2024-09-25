@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Tools - S3 Bucket Analyzer & Cost Calculator</title>
+    <title>AWS Tools - S3 Storage Cost Calculator & Bucket Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Include AWS SDK only if needed -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1030.0.min.js"></script>
+    <!-- Your JavaScript files -->
     <script src="script-analyze.js" defer></script>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
@@ -15,61 +17,14 @@
 
     <!-- Tab Navigation -->
     <div class="tab-container">
-        <button class="tab-button active" onclick="openTab('analyzer')">S3 Bucket Analyzer</button>
-        <button class="tab-button" onclick="openTab('calculator')">S3 Storage Cost Calculator</button>
-    </div>
-
-    <!-- S3 Bucket Analyzer Section -->
-    <div id="analyzer" class="tab-content">
-        <!-- <h2>S3 Bucket Analyzer</h2> -->
-        <!-- CORS Policy Notification -->
-        <div id="notification" class="notification">
-            <h3>Important: Add this CORS policy to your S3 bucket before proceeding:</h3>
-            <pre id="corsPolicy">
-[
-    {
-        "AllowedHeaders": ["*"],
-        "AllowedMethods": ["GET", "HEAD"],
-        "AllowedOrigins": ["*"],
-        "ExposeHeaders": ["ETag", "x-amz-meta-custom-header", "Content-Length"],
-        "MaxAgeSeconds": 3000
-    }
-]
-            </pre>
-            <button id="closeNotification" onclick="closeNotification()">Got it</button>
-        </div>
-
-        <!-- AWS Credentials Inputs -->
-        <div class="input-container">
-            <input type="text" id="accessKeyId" placeholder="Enter AWS Access Key ID"><br>
-            <input type="text" id="secretAccessKey" placeholder="Enter AWS Secret Access Key"><br>
-            <input type="text" id="sessionToken" placeholder="Enter AWS Session Token (Optional)"><br>
-            <input type="text" id="region" placeholder="Enter AWS Region (e.g., us-east-1)"><br>
-            <input type="text" id="bucketName" placeholder="Enter your bucket name"><br>
-            <button onclick="analyzeBucket()">Analyze Bucket</button>
-        </div>
-
-        <!-- Progress Bar -->
-        <div id="progressContainer">
-            <div id="progressBar">0%</div>
-        </div>
-
-        <!-- Output Results -->
-        <div class="results-container">
-            <h3>Bucket Costs</h3>
-            <pre id="bucketContents">Waiting for analysis...</pre>
-
-            <!-- Policy Text Area -->
-            <h3>Suggested Bucket Lifecycle Policy</h3>
-            <textarea id="policyArea" readonly>
-Waiting for analysis...
-            </textarea>
-        </div>
+        <button class="tab-button active" onclick="openTab(event, 'calculator')">S3 Storage Cost Calculator</button>
+        <button class="tab-button" onclick="openTab(event, 'analyzer')">S3 Bucket Analyzer</button>
     </div>
 
     <!-- S3 Storage Cost Calculator Section -->
-    <div id="calculator" class="tab-content" style="display:none;">
-        <!-- <h2>AWS S3 Storage Cost Calculator</h2> -->
+    <div id="calculator" class="tab-content" style="display:block;">
+        <!-- Note about the pricing region -->
+        <p><strong>Note:</strong> The prices are based on the <em>us-east-1 (N. Virginia)</em> region.</p>
         <table id="s3-calculator">
             <thead>
                 <tr>
@@ -82,7 +37,7 @@ Waiting for analysis...
                 </tr>
             </thead>
             <tbody>
- <!-- S3 Standard -->
+  <!-- S3 Standard -->
             <tr>
                 <td>S3 Standard</td>
                 <td>
@@ -235,9 +190,57 @@ Waiting for analysis...
         <h3>Total Monthly Cost: <span id="total-monthly-cost">$0.00</span></h3>
     </div>
 
+    <!-- S3 Bucket Analyzer Section -->
+    <div id="analyzer" class="tab-content" style="display:none;">
+        <!-- CORS Policy Notification -->
+        <div id="notification" class="notification">
+            <h3>Important: Add this CORS policy to your S3 bucket before proceeding:</h3>
+            <pre id="corsPolicy">
+[
+    {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "HEAD"],
+        "AllowedOrigins": ["*"],
+        "ExposeHeaders": ["ETag", "x-amz-meta-custom-header", "Content-Length"],
+        "MaxAgeSeconds": 3000
+    }
+]
+            </pre>
+            <button id="closeNotification" onclick="closeNotification()">Got it</button>
+        </div>
+
+        <!-- AWS Credentials Inputs -->
+        <div class="input-container">
+            <input type="text" id="accessKeyId" placeholder="Enter AWS Access Key ID"><br>
+            <input type="text" id="secretAccessKey" placeholder="Enter AWS Secret Access Key"><br>
+            <input type="text" id="sessionToken" placeholder="Enter AWS Session Token (Optional)"><br>
+            <input type="text" id="region" placeholder="Enter AWS Region (e.g., us-east-1)"><br>
+            <input type="text" id="bucketName" placeholder="Enter your bucket name"><br>
+            <button onclick="analyzeBucket()">Analyze Bucket</button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressContainer">
+            <div id="progressBar">0%</div>
+        </div>
+
+        <!-- Output Results -->
+        <div class="results-container">
+            <h3>Bucket Costs</h3>
+            <pre id="bucketContents">Waiting for analysis...</pre>
+
+            <!-- Policy Text Area -->
+            <h3>Suggested Bucket Lifecycle Policy</h3>
+            <textarea id="policyArea" readonly>
+Waiting for analysis...
+            </textarea>
+        </div>
+    </div>
+
+    <!-- Tab Navigation Script -->
     <script>
         // Function to open the selected tab
-        function openTab(tabName) {
+        function openTab(event, tabName) {
             var i, tabcontent, tabbuttons;
 
             // Hide all tab contents
