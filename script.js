@@ -1,72 +1,70 @@
+// Global variable to store the selected region
+let selectedRegion = 'us-east-1'; // Default region
+
+// Global variable to store the pricing data
+let pricingData = {};
+
+// Function to load pricing data from YAML file
+function loadPricingData() {
+    fetch('pricingData.yaml')
+        .then(response => response.text())
+        .then(data => {
+            pricingData = jsyaml.load(data);
+            // Enable the Calculate button
+            document.getElementById('calculateButton').disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading pricing data:', error);
+            alert('Failed to load pricing data. Please try again later.');
+        });
+}
+
+// Call loadPricingData when the page loads
+window.onload = function() {
+    loadPricingData();
+};
+
+// Function to update the selected region
+function updateRegion() {
+    const regionSelect = document.getElementById('regionSelect');
+    selectedRegion = regionSelect.value;
+
+    // Update the note about the pricing region
+    const regionNames = {
+        'us-east-1': 'US East (N. Virginia)',
+        'us-east-2': 'US East (Ohio)',
+        'us-west-1': 'US West (N. California)',
+        'us-west-2': 'US West (Oregon)',
+        'eu-west-1': 'EU (Ireland)'
+        'il-central-1': 'Israel (Tel Aviv)'
+        // Add more region names as needed
+    };
+
+    const pricingNote = document.getElementById('pricingNote');
+    pricingNote.innerHTML = `<strong>Note:</strong> The prices are based on the <em>${regionNames[selectedRegion]}</em> region.`;
+}
+
+// Function to calculate costs
 function calculateCosts() {
-    // Prices per GB per month (example rates as of September 2021)
-    const prices = {
-        standard: 0.023,
-        standardIA: 0.0125,
-        oneZoneIA: 0.01,
-        glacierIR: 0.004,
-        glacierFR: 0.0036,
-        glacierDA: 0.00099,
-        intelligentTiering: {
-            frequentAccess: 0.023,
-            infrequentAccess: 0.0125,
-            archiveInstantAccess: 0.004,
-            archiveAccess: 0.0036,
-            deepArchiveAccess: 0.00099,
-            monitoring: 0.0025 // per 1,000 objects per month
-        }
-    };
+    // Ensure that pricingData is loaded
+    if (Object.keys(pricingData).length === 0) {
+        alert('Pricing data is not loaded yet. Please try again shortly.');
+        return;
+    }
 
-    // Request costs per 1,000 requests
-    const requestCosts = {
-        standard: {
-            put: 0.005,
-            get: 0.0004
-        },
-        standardIA: {
-            put: 0.01,
-            get: 0.01
-        },
-        oneZoneIA: {
-            put: 0.01,
-            get: 0.01
-        },
-        glacierIR: {
-            put: 0.06,
-            get: 0.003
-        },
-        glacierFR: {
-            put: 0.06,
-            get: 0.01
-        },
-        glacierDA: {
-            put: 0.06,
-            get: 0.10
-        },
-        intelligentTiering: {
-            put: 0.005,
-            get: 0.0004
-        }
-    };
+    // Get the pricing data for the selected region
+    const regionPricing = pricingData[selectedRegion];
 
-    // Retrieval costs per GB
-    const retrievalCosts = {
-        standard: 0,
-        standardIA: 0.01,
-        oneZoneIA: 0.01,
-        glacierIR: 0.003,
-        glacierFR: 0.01, // For Standard Retrievals
-        glacierDA: 0.02, // For Standard Retrievals
-        intelligentTiering: {
-            frequentAccess: 0,
-            infrequentAccess: 0,
-            archiveInstantAccess: 0.003,
-            archiveAccess: 0.01,
-            deepArchiveAccess: 0.02
-        }
-    };
+    if (!regionPricing) {
+        alert('Pricing data for the selected region is not available.');
+        return;
+    }
 
-    // Helper function to convert TB to GB using decimal conversion (1 TB = 1,000 GB)
+    const prices = regionPricing.prices;
+    const requestCosts = regionPricing.requestCosts;
+    const retrievalCosts = regionPricing.retrievalCosts;
+
+    // Helper function to convert TB to GB
     function convertToGB(size, unit) {
         unit = unit.trim().toUpperCase();
         if (unit === "TB") {
@@ -141,6 +139,7 @@ function calculateCosts() {
 
         const requestCost = ((putRequests / 1000) * requestCosts.intelligentTiering.put) +
                             ((getRequests / 1000) * requestCosts.intelligentTiering.get);
+
         // Assume all retrievals are from Infrequent Access Tier
         const retrievalCost = retrievalGB * retrievalCosts.intelligentTiering.infrequentAccess;
 
@@ -153,6 +152,7 @@ function calculateCosts() {
 
         totalMonthlyCost += totalCost;
     }
+
     // Update Total Monthly Cost
     document.getElementById('total-monthly-cost').innerText = `$${totalMonthlyCost.toFixed(2)}`;
 }

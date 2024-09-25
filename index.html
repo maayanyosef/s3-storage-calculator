@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <!-- Include AWS SDK only if needed -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1030.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <!-- Your JavaScript files -->
     <script src="script-analyze.js" defer></script>
     <script src="script.js" defer></script>
@@ -23,8 +24,17 @@
 
     <!-- S3 Storage Cost Calculator Section -->
     <div id="calculator" class="tab-content" style="display:block;">
-        <!-- Note about the pricing region -->
-        <p><strong>Note:</strong> The prices are based on the <em>us-east-1 (N. Virginia)</em> region.</p>
+        <!-- Region Selection -->
+        <label for="regionSelect"><strong>Select AWS Region:</strong></label>
+        <select id="regionSelect" onchange="updateRegion()">
+            <option value="us-east-1">US East (N. Virginia)</option>
+            <option value="us-east-2">US East (Ohio)</option>
+            <option value="us-west-1">US West (N. California)</option>
+            <option value="us-west-2">US West (Oregon)</option>
+            <option value="eu-west-1">EU (Ireland)</option>
+            <option value="il-central-1">Israel (Tel Aviv)</option>
+            <!-- Add more regions as needed -->
+        </select>
         <table id="s3-calculator">
             <thead>
                 <tr>
@@ -188,6 +198,8 @@
         </table>
         <button onclick="calculateCosts()">Calculate</button>
         <h3>Total Monthly Cost: <span id="total-monthly-cost">$0.00</span></h3>
+        <!-- Note about the pricing region -->
+        <p><strong>Note:</strong> The prices are based on the <a href="https://aws.amazon.com/s3/pricing/?p=pm&c=s3&z=4" target="_blank">AWS S3 Pricing.</a></p>
     </div>
 
     <!-- S3 Bucket Analyzer Section -->

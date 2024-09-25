@@ -1,0 +1,305 @@
+us-east-1:
+  prices:
+    standard: 0.023
+    standardIA: 0.0125
+    oneZoneIA: 0.01
+    glacierIR: 0.004
+    glacierFR: 0.0036
+    glacierDA: 0.00099
+    intelligentTiering:
+      frequentAccess: 0.023
+      infrequentAccess: 0.0125
+      archiveInstantAccess: 0.004
+      archiveAccess: 0.0036
+      deepArchiveAccess: 0.00099
+      monitoring: 0.0025  # per 1,000 objects per month
+  requestCosts:
+    standard:
+      put: 0.005
+      get: 0.0004
+    standardIA:
+      put: 0.01
+      get: 0.001
+    oneZoneIA:
+      put: 0.01
+      get: 0.001
+    glacierIR:
+      put: 0.032
+      get: 0.003
+    glacierFR:
+      put: 0.06
+      get: 0.01
+    glacierDA:
+      put: 0.06
+      get: 0.10
+    intelligentTiering:
+      put: 0.005
+      get: 0.0004
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.01
+    oneZoneIA: 0.01
+    glacierIR: 0.003
+    glacierFR: 0.01
+    glacierDA: 0.02
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0.01
+      archiveInstantAccess: 0.003
+      archiveAccess: 0.01
+      deepArchiveAccess: 0.02
+
+us-east-2:
+  prices:
+    standard: 0.023
+    standardIA: 0.0125
+    oneZoneIA: 0.01
+    glacierIR: 0.004
+    glacierFR: 0.0036
+    glacierDA: 0.00099
+    intelligentTiering:
+      frequentAccess: 0.023
+      infrequentAccess: 0.0125
+      archiveInstantAccess: 0.004
+      archiveAccess: 0.0036
+      deepArchiveAccess: 0.00099
+      monitoring: 0.0025
+  requestCosts:
+    standard:
+      put: 0.005
+      get: 0.0004
+    standardIA:
+      put: 0.01
+      get: 0.001
+    oneZoneIA:
+      put: 0.01
+      get: 0.001
+    glacierIR:
+      put: 0.032
+      get: 0.003
+    glacierFR:
+      put: 0.06
+      get: 0.01
+    glacierDA:
+      put: 0.06
+      get: 0.10
+    intelligentTiering:
+      put: 0.005
+      get: 0.0004
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.01
+    oneZoneIA: 0.01
+    glacierIR: 0.003
+    glacierFR: 0.01
+    glacierDA: 0.02
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0.01
+      archiveInstantAccess: 0.003
+      archiveAccess: 0.01
+      deepArchiveAccess: 0.02
+
+us-west-1:
+  prices:
+    standard: 0.025
+    standardIA: 0.0135
+    oneZoneIA: 0.0112
+    glacierIR: 0.0044
+    glacierFR: 0.004
+    glacierDA: 0.0010
+    intelligentTiering:
+      frequentAccess: 0.025
+      infrequentAccess: 0.0135
+      archiveInstantAccess: 0.0044
+      archiveAccess: 0.004
+      deepArchiveAccess: 0.0010
+      monitoring: 0.0025
+  requestCosts:
+    standard:
+      put: 0.0055
+      get: 0.00043
+    standardIA:
+      put: 0.011
+      get: 0.0011
+    oneZoneIA:
+      put: 0.011
+      get: 0.0011
+    glacierIR:
+      put: 0.035
+      get: 0.0032
+    glacierFR:
+      put: 0.066
+      get: 0.011
+    glacierDA:
+      put: 0.066
+      get: 0.11
+    intelligentTiering:
+      put: 0.0055
+      get: 0.00043
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.012
+    oneZoneIA: 0.012
+    glacierIR: 0.0032
+    glacierFR: 0.011
+    glacierDA: 0.022
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0.012
+      archiveInstantAccess: 0.0032
+      archiveAccess: 0.011
+      deepArchiveAccess: 0.022
+
+us-west-2:
+  prices:
+    standard: 0.023
+    standardIA: 0.0125
+    oneZoneIA: 0.01
+    glacierIR: 0.004
+    glacierFR: 0.0036
+    glacierDA: 0.00099
+    intelligentTiering:
+      frequentAccess: 0.023
+      infrequentAccess: 0.0125
+      archiveInstantAccess: 0.004
+      archiveAccess: 0.0036
+      deepArchiveAccess: 0.00099
+      monitoring: 0.0025
+  requestCosts:
+    standard:
+      put: 0.005
+      get: 0.0004
+    standardIA:
+      put: 0.01
+      get: 0.001
+    oneZoneIA:
+      put: 0.01
+      get: 0.001
+    glacierIR:
+      put: 0.032
+      get: 0.003
+    glacierFR:
+      put: 0.06
+      get: 0.01
+    glacierDA:
+      put: 0.06
+      get: 0.10
+    intelligentTiering:
+      put: 0.005
+      get: 0.0004
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.01
+    oneZoneIA: 0.01
+    glacierIR: 0.003
+    glacierFR: 0.01
+    glacierDA: 0.02
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0.01
+      archiveInstantAccess: 0.003
+      archiveAccess: 0.01
+      deepArchiveAccess: 0.02
+
+eu-west-1:
+  prices:
+    standard: 0.0245
+    standardIA: 0.0135
+    oneZoneIA: 0.011
+    glacierIR: 0.0042
+    glacierFR: 0.0039
+    glacierDA: 0.0010
+    intelligentTiering:
+      frequentAccess: 0.0245
+      infrequentAccess: 0.0135
+      archiveInstantAccess: 0.0042
+      archiveAccess: 0.0039
+      deepArchiveAccess: 0.0010
+      monitoring: 0.0025
+  requestCosts:
+    standard:
+      put: 0.0055
+      get: 0.00043
+    standardIA:
+      put: 0.011
+      get: 0.0011
+    oneZoneIA:
+      put: 0.011
+      get: 0.0011
+    glacierIR:
+      put: 0.035
+      get: 0.0032
+    glacierFR:
+      put: 0.066
+      get: 0.011
+    glacierDA:
+      put: 0.066
+      get: 0.11
+    intelligentTiering:
+      put: 0.0055
+      get: 0.00043
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.012
+    oneZoneIA: 0.012
+    glacierIR: 0.0032
+    glacierFR: 0.011
+    glacierDA: 0.022
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0
+      archiveInstantAccess: 0.0032
+      archiveAccess: 0.011
+      deepArchiveAccess: 0.022
+
+il-central-1:
+  prices:
+    standard: 0.026
+    standardIA: 0.014
+    oneZoneIA: 0.0112
+    glacierIR: 0.0047
+    glacierFR: 0.0041
+    glacierDA: 0.001
+    intelligentTiering:
+      frequentAccess: 0.026
+      infrequentAccess: 0.014
+      archiveInstantAccess: 0.0047
+      archiveAccess: 0.0041
+      deepArchiveAccess: 0.001
+      monitoring: 0.0025  # per 1,000 objects per month
+  requestCosts:
+    standard:
+      put: 0.0055
+      get: 0.00043
+    standardIA:
+      put: 0.011
+      get: 0.0011
+    oneZoneIA:
+      put: 0.011
+      get: 0.0011
+    glacierIR:
+      put: 0.035
+      get: 0.0032
+    glacierFR:
+      put: 0.066
+      get: 0.011
+    glacierDA:
+      put: 0.066
+      get: 0.11
+    intelligentTiering:
+      put: 0.0055
+      get: 0.00043
+  retrievalCosts:
+    standard: 0
+    standardIA: 0.012
+    oneZoneIA: 0.012
+    glacierIR: 0.0035
+    glacierFR: 0.011
+    glacierDA: 0.022
+    intelligentTiering:
+      frequentAccess: 0
+      infrequentAccess: 0
+      archiveInstantAccess: 0.0035
+      archiveAccess: 0.011
+      deepArchiveAccess: 0.022
