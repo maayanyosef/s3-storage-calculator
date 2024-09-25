@@ -20,8 +20,14 @@ function loadPricingData() {
 }
 
 // Call loadPricingData when the page loads
-window.onload = function() {
+window.onload = function () {
     loadPricingData();
+    // Initialize Tippy.js tooltips
+    tippy('[data-tippy-content]', {
+        animation: 'scale',
+        theme: 'light-border',
+        delay: [100, 100],
+    });
 };
 
 // Function to update the selected region
